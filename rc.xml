@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<labwc_config>
+  <theme>
+    <name>Papirus</name>
+    <cornerRadius>8</cornerRadius>
+    <font>
+      <name>sans</name>
+      <size>10</size>
+    </font>
+  </theme>
+  <keyboard>
+    <default></default>
+    <keybind>
+      <key>W-Return</key>
+      <action>
+        <name>Execute</name>
+        <command>foot</command>
+      </action>
+    </keybind>
+    <keybind>
+      <key>W-F4</key>
+      <action>
+        <name>None</name>
+      </action>
+    </keybind>
+  </keyboard>
+</labwc_config>

@@ -1,0 +1,20 @@
+---
+theme:
+- name: Papirus
+- cornerRadius: 8
+- font:
+  - name: sans
+  - size: 10
+  # Can be written as "- { name: sans, size: 10 }"
+keyboard:
+- default:
+- keybind:
+  - key: W-Return
+  - action:
+    - name: Execute
+    - command: foot
+- keybind:
+  - key: W-F4
+  - action:
+    - name: None
+...
