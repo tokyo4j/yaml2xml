@@ -10,10 +10,18 @@ project(
 )
 
 yaml = dependency('yaml-0.1')
+xml2 = dependency('libxml-2.0')
 
 executable(
   meson.project_name(),
   sources: files('yaml2xml.c'),
   dependencies: [yaml],
+  install: true,
+)
+
+executable(
+  'xml2yaml',
+  sources: files('xml2yaml.c'),
+  dependencies: xml2,
   install: true,
 )
