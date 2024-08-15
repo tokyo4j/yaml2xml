@@ -16,11 +16,17 @@ depth(xmlNode *node)
 {
 	int count = 0;
 
-	while (node) {
-		++count;
+	while (node && node->parent) {
+		if (strcmp((char *)node->name, "text") != 0) {
+			++count;
+		}
 		node = node->parent;
 	}
-	return count - 2;
+
+	/* Ignore root element */
+	--count;
+
+	return count;
 }
 
 static void
