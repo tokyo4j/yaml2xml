@@ -24,7 +24,7 @@ depth(xmlNode *node)
 	}
 
 	/* Ignore root element */
-	--count;
+	count -= 2;
 
 	return count;
 }
@@ -32,6 +32,9 @@ depth(xmlNode *node)
 static void
 indent(int level)
 {
+	if (!level) {
+		return;
+	}
 	if (level > 1) {
 		--level;
 		printf("%*c", 2 * level, ' ');
