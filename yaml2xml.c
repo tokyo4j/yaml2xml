@@ -2,40 +2,30 @@
 #include <assert.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include <string.h>
 #include <yaml.h>
 
-__attribute__((unused)) static const char *
-get_event_name(yaml_event_type_t type) {
-    switch (type) {
-    case YAML_NO_EVENT:
-        return "YAML_NO_EVENT";
-    case YAML_STREAM_START_EVENT:
-        return "YAML_STREAM_START_EVENT";
-    case YAML_STREAM_END_EVENT:
-        return "YAML_STREAM_END_EVENT";
-    case YAML_DOCUMENT_START_EVENT:
-        return "YAML_DOCUMENT_START_EVENT";
-    case YAML_DOCUMENT_END_EVENT:
-        return "YAML_DOCUMENT_END_EVENT";
-    case YAML_ALIAS_EVENT:
-        return "YAML_ALIAS_EVENT";
-    case YAML_SCALAR_EVENT:
-        return "YAML_SCALAR_EVENT";
-    case YAML_SEQUENCE_START_EVENT:
-        return "YAML_SEQUENCE_START_EVENT";
-    case YAML_SEQUENCE_END_EVENT:
-        return "YAML_SEQUENCE_END_EVENT";
+static void process_mapping(yaml_parser_t *parser);
+static void process_sequence(yaml_parser_t *parser, char *key_name);
+
+static void process_value(yaml_parser_t *parser, yaml_event_t *event,
+                          char *key_name) {
+    switch (event->type) {
     case YAML_MAPPING_START_EVENT:
-        return "YAML_MAPPING_START_EVENT";
-    case YAML_MAPPING_END_EVENT:
-        return "YAML_MAPPING_END_EVENT";
-    default:
-        return NULL;
+        printf("<%s>", key_name);
+        process_mapping(parser);
+        printf("</%s>", key_name);
+        break;
+    case YAML_SEQUENCE_START_EVENT:
+        process_sequence(parser, key_name);
+        break;
+    case YAML_SCALAR_EVENT:
+        printf("<%s>", key_name);
+        printf("%s", (char *)event->data.scalar.value);
+        printf("</%s>", key_name);
+        break;
+    default:;
     }
 }
-
-static void process_mapping(yaml_parser_t *parser);
 
 static void process_sequence(yaml_parser_t *parser, char *key_name) {
     while (1) {
@@ -43,22 +33,7 @@ static void process_sequence(yaml_parser_t *parser, char *key_name) {
         assert(yaml_parser_parse(parser, &event));
         if (event.type == YAML_SEQUENCE_END_EVENT)
             break;
-        switch (event.type) {
-        case YAML_MAPPING_START_EVENT:
-            printf("<%s>", key_name);
-            process_mapping(parser);
-            printf("</%s>", key_name);
-            break;
-        case YAML_SEQUENCE_START_EVENT:
-            assert(false);
-            break;
-        case YAML_SCALAR_EVENT:
-            printf("<%s>", (char *)key_name);
-            printf("%s", (char *)event.data.scalar.value);
-            printf("</%s>", (char *)key_name);
-            break;
-        default:;
-        }
+        process_value(parser, &event, key_name);
     }
 }
 
@@ -69,25 +44,9 @@ static void process_mapping(yaml_parser_t *parser) {
         if (key_event.type == YAML_MAPPING_END_EVENT)
             break;
         assert(key_event.type == YAML_SCALAR_EVENT);
-
         assert(yaml_parser_parse(parser, &value_event));
-
-        switch (value_event.type) {
-        case YAML_MAPPING_START_EVENT:
-            printf("<%s>", (char *)key_event.data.scalar.value);
-            process_mapping(parser);
-            printf("</%s>", (char *)key_event.data.scalar.value);
-            break;
-        case YAML_SEQUENCE_START_EVENT:
-            process_sequence(parser, (char *)key_event.data.scalar.value);
-            break;
-        case YAML_SCALAR_EVENT:
-            printf("<%s>", (char *)key_event.data.scalar.value);
-            printf("%s", (char *)value_event.data.scalar.value);
-            printf("</%s>", (char *)key_event.data.scalar.value);
-            break;
-        default:;
-        }
+        process_value(parser, &value_event,
+                      (char *)key_event.data.scalar.value);
     }
 }
 
