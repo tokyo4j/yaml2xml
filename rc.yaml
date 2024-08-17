@@ -1,20 +1,74 @@
----
+core:
+  xwaylandPersistence: yes
+
+placement:
+  policy: cascade
+
 theme:
-- name: Papirus
-- cornerRadius: 8
-- font:
-  - name: sans
-  - size: 10
-  # Can be written as "- { name: sans, size: 10 }"
+  dropShadows: yes
+  font:
+    - place: ActiveWindow
+      weight: normal
+    - place: InactiveWindow
+      weight: normal
+
+windowSwitcher:
+  show: yes
+  fields:
+    field:
+      - content: type
+        width: 15%
+      - content: title
+        width: 85%
+
+regions:
+  region:
+    - { name: top-left, x: 0%, y: 0%, width: 50%, height: 50% }
+    - { name: top-right, x: 50%, y: 0%, width: 50%, height: 50% }
+
 keyboard:
-- default:
-- keybind:
-  - key: W-Return
-  - action:
-    - name: Execute
-    - command: foot
-- keybind:
-  - key: W-F4
-  - action:
-    - name: None
-...
+  keybind:
+    - key: A-F4
+      action:
+        - name: Close
+    - key: W-s
+      action:
+        - name: Execute
+          command: Alacritty
+    - key: W-a
+      action:
+        - name: Execute
+          command: fuzzel
+
+mouse:
+  default:
+  context:
+    - name: Frame
+      mousebind:
+        - button: W-Left
+          event: Press # "action" is renamed to "event"
+          action:
+            - name: Raise
+            - name: Move
+        - button: W-Right
+          event: Drag # "action" is renamed to "event"
+          action:
+            - name: Resize
+        - button: A-Left
+          event: Press # "action" is renamed to "event"
+          # None
+        - button: A-Left
+          event: Press # "action" is renamed to "event"
+          # None
+        - button: A-Right
+          event: Press # "action" is renamed to "event"
+          # None
+        - button: A-Right
+          event: Press # "action" is renamed to "event"
+          # None
+
+libinput:
+  device:
+    - category: touchpad
+      naturalScroll: yes
+      tapAndDrag: no
